@@ -8,7 +8,7 @@
     "serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten"
+    "electron:generate-icons": "electron-icon-builder --input=./public/wdlogo.ico --output=build --flatten"
   },
   "main": "background.js",
   "dependencies": {
@@ -21,12 +21,13 @@
     "getmac": "^5.16.0",
     "lodash-id": "^0.14.0",
     "lowdb": "^1.0.0",
+    "moment": "^2.29.4",
     "monaco-editor": "^0.34.0",
     "mysql2": "^2.2.2",
     "puppeteer-core": "^10.1.0",
     "request": "^2.88.2",
     "request-promise": "^4.2.6",
-    "vm2": "^3.9.6",
+    "vm2": "^3.9.19",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
     "vuex": "^3.4.0",

@@ -16,14 +16,14 @@
       >
         导入应用
       </el-button>
-      <el-button
+      <!-- <el-button
         size="mini"
         type="success"
         @click="getRemoteApp"
         :loading="remoteLoading"
       >
         拉取线上模板
-      </el-button>
+      </el-button> -->
     </div>
     <div class="card-container">
       <div class="card-block" v-for="v in appList" :key="v.id">

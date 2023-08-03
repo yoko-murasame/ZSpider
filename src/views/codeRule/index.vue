@@ -82,6 +82,8 @@ export default {
         { name: 'mysql2', info: 'MySQL操作库' },
         { name: 'puppeteer-core', info: '操作Chrome库' },
         { name: 'electron', info: '操作Electron窗体相关API' },
+        { name: 'xlsx', info: 'EXCEL相关api' },
+        { name: 'moment', info: '时间日期相关api' },
       ],
       funcData: [
         { name: 'dataDb', info: '操作本地JSON数据存储, 用于本地存储数据' },
@@ -183,6 +185,8 @@ export default {
                 'mysql2',
                 'puppeteer-core',
                 'electron',
+                'xlsx',
+                'moment',
               ],
               transitive: true,
             },

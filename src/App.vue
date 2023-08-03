@@ -3,7 +3,7 @@
     <div class="frame-header-block">
       <div class="frame-header">
         <div class="frame-title">
-          治采天机-ZSpider
+          ZSpider
           <!-- (<span
             @click="doLogin"
             class="online-status"

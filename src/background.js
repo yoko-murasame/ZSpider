@@ -63,7 +63,7 @@ function createWindow() {
       webSecurity: false, // 跨域
     },
     // eslint-disable-next-line no-undef
-    icon: path.resolve(__static, 'icon.png'),
+    icon: path.resolve(__static, 'wdlogo.ico'),
   })
   // win.setAlwaysOnTop(true)
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -116,7 +116,7 @@ async function createReviewPageWindow(arg) {
       preload: path.join(__dirname, 'preload.js'),
     },
     // eslint-disable-next-line no-undef
-    icon: path.resolve(__static, 'icon.png'),
+    icon: path.resolve(__static, 'wdlogo.ico'),
   })
   reviewPageWin.on('close', () => {
     reviewPageWin = null
@@ -131,7 +131,7 @@ async function createReviewPageWindow(arg) {
  */
 function createTray() {
   // eslint-disable-next-line no-undef
-  tray = new Tray(path.resolve(__static, 'icon.png'))
+  tray = new Tray(path.resolve(__static, 'wdlogo.ico'))
   const contextMenu = Menu.buildFromTemplate([
     new MenuItem({
       label: '显示主程序',
@@ -159,7 +159,7 @@ function createTray() {
       },
     }),
   ])
-  tray.setToolTip('治电采集器')
+  tray.setToolTip('智城所爬虫小工具')
   tray.setContextMenu(contextMenu)
 
   tray.on('click', () => {
