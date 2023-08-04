@@ -1,21 +1,29 @@
 <template>
   <div class="home-page">
     <div class="filter">
-      <el-dropdown trigger="click" @command="handleCreate">
+      <!-- <el-dropdown trigger="click" @command="handleCreate">
         <el-button type="primary" size="mini"> 新建应用 </el-button>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="rule">规则应用</el-dropdown-item>
           <el-dropdown-item command="code">代码应用</el-dropdown-item>
         </el-dropdown-menu>
-      </el-dropdown>
+      </el-dropdown> -->
       <el-button
+        style="margin-left: 20px"
+        size="mini"
+        type="primary"
+        @click="handleCreate('code')"
+      >
+        新建应用
+      </el-button>
+      <!-- <el-button
         style="margin-left: 20px"
         size="mini"
         type="primary"
         @click="importApp"
       >
         导入应用
-      </el-button>
+      </el-button> -->
       <!-- <el-button
         size="mini"
         type="success"
@@ -64,40 +72,40 @@ import {
   uploadApp,
   getRemoteApp,
   deleteApp,
-} from '@/service/global.service'
-import { clearRule, addRule } from '@/service/rule.service'
-import { clearData } from '@/service/data.service'
-import fs from 'fs'
-import { ipcRenderer } from 'electron'
+} from "@/service/global.service";
+import { clearRule, addRule } from "@/service/rule.service";
+import { clearData } from "@/service/data.service";
+import fs from "fs";
+import { ipcRenderer } from "electron";
 
 export default {
-  name: 'HomePage',
+  name: "HomePage",
   data() {
     return {
       appList: [],
       remoteLoading: false,
-    }
+    };
   },
   mounted() {
-    this.getAppList()
+    this.getAppList();
   },
   methods: {
     getAppList() {
-      this.appList = getApps()
+      this.appList = getApps();
     },
     handleCtrl($event, app) {
-      if ($event === 'delete') {
-        this.deleteApp(app.id)
-      } else if ($event === 'upload') {
+      if ($event === "delete") {
+        this.deleteApp(app.id);
+      } else if ($event === "upload") {
         uploadApp(app).then((res) => {
-          this.$alert(res.message, '上传结果', {
-            confirmButtonText: '确定',
+          this.$alert(res.message, "上传结果", {
+            confirmButtonText: "确定",
             callback: () => {},
-          })
-        })
-      } else if ($event === 'export') {
-        const details = getAppById(app.id)
-        const path = ipcRenderer.sendSync('showSaveDialog')
+          });
+        });
+      } else if ($event === "export") {
+        const details = getAppById(app.id);
+        const path = ipcRenderer.sendSync("showSaveDialog");
         if (path) {
           fs.writeFile(
             `${path}`,
@@ -106,12 +114,12 @@ export default {
               type: app.type,
             }),
             () => {
-              this.$alert(`导出成功, 路径: ${path}`, '导出结果', {
-                confirmButtonText: '确定',
+              this.$alert(`导出成功, 路径: ${path}`, "导出结果", {
+                confirmButtonText: "确定",
                 callback: () => {},
-              })
+              });
             }
-          )
+          );
         }
       }
     },
@@ -119,100 +127,100 @@ export default {
      * 新建触发
      */
     handleCreate(command) {
-      clearRule()
-      clearData()
-      if (command === 'rule') {
-        this.$router.push('/ruleSetting')
+      clearRule();
+      clearData();
+      if (command === "rule") {
+        this.$router.push("/ruleSetting");
       } else {
-        this.$router.push('/codeRule')
+        this.$router.push("/codeRule");
       }
     },
     /**
      * 拉取远程应用
      */
     getRemoteApp() {
-      this.remoteLoading = false
+      this.remoteLoading = false;
       this.$confirm(
-        '拉取远程应用, 若与本地相同, 将覆盖本地应用, 是否继续?',
-        '提示',
+        "拉取远程应用, 若与本地相同, 将覆盖本地应用, 是否继续?",
+        "提示",
         {
-          confirmButtonText: '是',
-          cancelButtonText: '否',
-          type: 'info',
+          confirmButtonText: "是",
+          cancelButtonText: "否",
+          type: "info",
         }
       )
         .then(() => {
           getRemoteApp()
             .then((res) => {
               res.forEach((item) => {
-                const remoteApp = JSON.parse(item.body)
-                remoteApp.appName = item.title
-                remoteApp.isRemote = true
-                const localApp = getAppById(remoteApp.id)
+                const remoteApp = JSON.parse(item.body);
+                remoteApp.appName = item.title;
+                remoteApp.isRemote = true;
+                const localApp = getAppById(remoteApp.id);
                 if (localApp) {
-                  remoteApp.id = localApp.id
-                  editAppById(remoteApp.id, remoteApp)
+                  remoteApp.id = localApp.id;
+                  editAppById(remoteApp.id, remoteApp);
                 } else {
-                  addApp(remoteApp)
-                  this.getAppList()
+                  addApp(remoteApp);
+                  this.getAppList();
                 }
-              })
-              this.remoteLoading = false
+              });
+              this.remoteLoading = false;
             })
             .catch(() => {
-              this.remoteLoading = false
-            })
+              this.remoteLoading = false;
+            });
         })
-        .catch(() => {})
+        .catch(() => {});
     },
     async importApp() {
-      const filePath = ipcRenderer.sendSync('importAppDialog')
+      const filePath = ipcRenderer.sendSync("importAppDialog");
       if (filePath) {
         /* eslint-disable */
-        fs.readFile(filePath[0], 'utf8', (e, res) => {
-          if (e) throw e
-          const data = JSON.parse(res)
+        fs.readFile(filePath[0], "utf8", (e, res) => {
+          if (e) throw e;
+          const data = JSON.parse(res);
           addApp({
             appName: filePath[0].match(/([^\.\/\\]+)\.([a-z]+)$/i)[1],
             ruleConfig: data.ruleConfig,
-            type: data.type
-          })
-          this.getAppList()
-        })
+            type: data.type,
+          });
+          this.getAppList();
+        });
         /* eslint-enable */
       }
     },
     deleteApp(id) {
-      this.$confirm('确定要删除该应用?', '提示', {
-        confirmButtonText: '是',
-        cancelButtonText: '否',
-        type: 'info',
+      this.$confirm("确定要删除该应用?", "提示", {
+        confirmButtonText: "是",
+        cancelButtonText: "否",
+        type: "info",
       })
         .then(() => {
-          deleteApp(id)
-          this.getAppList()
+          deleteApp(id);
+          this.getAppList();
         })
-        .catch(() => {})
+        .catch(() => {});
     },
     toDetails(data) {
-      if (data.type === 'rule') {
-        const details = getAppById(data.id)
+      if (data.type === "rule") {
+        const details = getAppById(data.id);
         if (details) {
-          const obj = JSON.parse(details.ruleConfig)
-          addRule(obj)
-          clearData()
+          const obj = JSON.parse(details.ruleConfig);
+          addRule(obj);
+          clearData();
           this.$nextTick(() => {
             this.$router.push(
               `/ruleSetting?id=${details.id}&appName=${details.appName}`
-            )
-          })
+            );
+          });
         }
       } else {
-        this.$router.push(`/codeRule?id=${data.id}&appName=${data.appName}`)
+        this.$router.push(`/codeRule?id=${data.id}&appName=${data.appName}`);
       }
     },
   },
-}
+};
 </script>
 <style lang="scss">
 .home-page {
