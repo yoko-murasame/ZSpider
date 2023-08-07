@@ -2,9 +2,9 @@ const puppeteer = require('puppeteer-core')
 const XLSX = require('xlsx')
 const moment = require('moment')
 // const fs = require('fs')
-// const path = require('path')
 // const cheerio = require('cheerio')
-// const { ipcRenderer } = require('electron')
+const path = require('path')
+const os = require('os')
 
 let 水库名称 = '珊溪水库'
 let 水库代码 = '70600500'
@@ -13,7 +13,7 @@ let url = `https://sqfb.zjsq.net.cn:8089/nuxtsyq/new/MarkInfo?zh=${水库代码}
   水库名称
 )}&day=${天数}`
 // let url ='https://sqfb.zjsq.net.cn:8089/nuxtsyq/new/MarkInfo?zh=70508440&zm=%E6%B3%BD%E9%9B%85%E6%B0%B4%E5%BA%93&day=1'
-// let chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+let chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
 
 let browser, page
 async function spider() {
@@ -117,7 +117,13 @@ async function spider() {
   const ws = XLSX.utils.json_to_sheet(mergedData)
   const wb = XLSX.utils.book_new()
   XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
-  XLSX.writeFile(wb, `${水库名称}-${水库代码}-${result}.xlsx`)
+  // 保存桌面
+  const homedir = os.homedir();
+  const desktopPath = 'desktop'
+  const fileName = `${水库名称}-${水库代码}-${result}.xlsx`
+  const filePath = path.join(homedir, desktopPath, fileName)
+  console.log(filePath)
+  XLSX.writeFile(wb, filePath)
 
   // 通过对话框让用户选择导出目录和文件名
   // const path = ipcRenderer.sendSync('showSaveJsonDialog')
@@ -143,3 +149,20 @@ async function spider() {
 }
 
 spider()
+
+// 路径测试
+// const { remote } = require('electron')
+// const desktopPath = remote.app.getPath('desktop')
+// console.log(desktopPath)
+// const fileName = `aaa.xlsx`
+// console.log(fileName)
+// const path = require('path')
+// const filePath = path.join('aaa', fileName)
+// console.log(filePath)
+// const os = require('os');
+// const homedir = os.homedir();
+// console.log(homedir)
+// const moment = require('moment')
+// const now = moment().format('YYYY-MM-DD HH-mm-ss')
+// console.log(now)
+// return

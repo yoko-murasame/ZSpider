@@ -84,6 +84,7 @@ export default {
         { name: 'electron', info: '操作Electron窗体相关API' },
         { name: 'xlsx', info: 'EXCEL相关api' },
         { name: 'moment', info: '时间日期相关api' },
+        { name: 'os', info: 'os' },
       ],
       funcData: [
         { name: 'dataDb', info: '操作本地JSON数据存储, 用于本地存储数据' },
@@ -175,7 +176,7 @@ export default {
             chromePath: this.$store.state.chromePath,
           },
           require: {
-            builtin: ['fs', 'path'],
+            builtin: ['fs', 'path', 'os'],
             external: {
               modules: [
                 'cheerio',
