@@ -1,8 +1,13 @@
 const path = require('path')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
+function resolve(dir) {
+  return path.join(__dirname, dir)
+}
 
 module.exports = {
-  publicPath: '/',
+  publicPath: './',
+  // assetsDir: 'assets',
+  // outputDir: 'dist',
   productionSourceMap: false,
   lintOnSave: process.env.NODE_ENV === 'development',
   configureWebpack: {
@@ -13,11 +18,11 @@ module.exports = {
       }),
     ],
     // 打包时包含,虽然可以启动,但是功能错误
-    externals: {
-      vm2: 'require("vm2")',
-      mysql2: 'require("mysql2")',
-      'puppeteer-core': 'require("puppeteer-core")',
-    },
+    // externals: {
+    //   vm2: 'require("vm2")',
+    //   mysql2: 'require("mysql2")',
+    //   'puppeteer-core': 'require("puppeteer-core")',
+    // },
     module: {
       // Removes these errors: "Critical dependency: require function is used in a way in which dependencies cannot be statically extracted"
       // https://github.com/AnalyticalGraphicsInc/cesium-webpack-example/issues/6
@@ -29,14 +34,23 @@ module.exports = {
   chainWebpack(config) {
     config.plugins.delete('preload')
     config.plugins.delete('prefetch')
+    // config.resolve.alias
+    //   .set('@$', resolve('src'))
+    //   .set('@api', resolve('src/api'))
+    //   .set('@assets', resolve('src/assets'))
+    //   .set('@comp', resolve('src/components'))
+    // config.module
+    //   .rule('fonts')
+    //   .test(/\.(woff2?|woff|eot|ttf|otf)(\?.*)?$/)
+    //   .use('file-loader')
+    //   .loader('file-loader')
+    //   .options({
+    //     name: 'fonts/[name].[hash:8].[ext]',
+    //     limit: 8192,
+    //   })
     config
       .when(process.env.NODE_ENV === 'development', (config) =>
         config.devtool('cheap-source-map')
-      )
-      .when(process.env.NODE_ENV === 'production', (config) =>
-        config.output
-          .filename('./js/[name].[hash].js')
-          .chunkFilename('./js/[name].[hash].js')
       )
       .when(process.env.NODE_ENV === 'development', (config) => {
         config.externals({
@@ -45,7 +59,15 @@ module.exports = {
           'puppeteer-core': 'require("puppeteer-core")',
         })
       })
-    // config.mode('production').output.filename(`./js/[name].[hash].js`).chunkFilename(`./js/[name].[hash].js`)
+      .when(process.env.NODE_ENV === 'production', (config) =>
+        config.output
+          .filename('./js/[name].[hash].js')
+          .chunkFilename('./js/[name].[hash].js')
+      )
+    // config
+    //   .mode('production')
+    //   .output.filename(`./js/[name].[hash].js`)
+    //   .chunkFilename(`./js/[name].[hash].js`)
     // 分离打包
     config.when(process.env.NODE_ENV !== 'development', (config) => {
       config.optimization.splitChunks({
@@ -77,13 +99,35 @@ module.exports = {
   pluginOptions: {
     electronBuilder: {
       preload: 'src/preload.js',
+      // 设置最后的静态资源路径 https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/configuration.html#typescript-options
+      // customFileProtocol: 'app://./', // Make sure to add "./" to the end of the protocol
+      // If you want to use the file:// protocol, add win.loadURL(`file://${__dirname}/index.html`) to your main process file
+      // In place of win.loadURL('app://./index.html'), and set customFileProtocol to './'
+      customFileProtocol: './',
       nodeIntegration: true, // render进程中可以使用node
       builderOptions: {
-        extraResources: ['src', 'vm2', 'mysql2', 'puppeteer-core'],
+        extraResources: [
+          // 这src目录其实没啥用
+          // 'src',
+          // {
+          //   from: 'dist',
+          //   to: 'src',
+          // },
+          'node_modules',
+          {
+            from: 'node_modules',
+            to: '../node_modules',
+          },
+          // {
+          //   from: './public',
+          //   to: './',
+          // },
+        ],
         appId: 'com.zzes.spider',
-        productName: 'ZSpider',
+        productName: '智城所爬虫小工具',
         copyright: 'Copyright © ZZES Co,Ltd',
         compression: 'maximum',
+        asar: false,
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: '${productName}-${version}-${os}-${arch}.${ext}',
         win: {
@@ -111,7 +155,7 @@ module.exports = {
         //   createDesktopShortcut: true, // 创建桌面图标
         //   createStartMenuShortcut: true, // 创建开始菜单图标
         //   deleteAppDataOnUninstall: true, // 卸载时删除用户数据
-        //   shortcutName: 'ZSpider', // 图标名称
+        //   shortcutName: '智城所爬虫小工具', // 图标名称
         //   guid: 'a961d83b-826a-fbcb-4d1c-97913043cse5', // 软件guid
         // },
       },

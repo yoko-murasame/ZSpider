@@ -16,14 +16,14 @@
       >
         新建应用
       </el-button>
-      <!-- <el-button
+      <el-button
         style="margin-left: 20px"
         size="mini"
         type="primary"
         @click="importApp"
       >
         导入应用
-      </el-button> -->
+      </el-button>
       <!-- <el-button
         size="mini"
         type="success"

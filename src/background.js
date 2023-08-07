@@ -14,7 +14,7 @@ import {
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import path from 'path'
 const isDevelopment = process.env.NODE_ENV !== 'production'
-const URLSCHEME = 'zspider' // 用户自定义 URL SCHEME
+const URLSCHEME = 'app' // 用户自定义 URL SCHEME
 
 // 主窗口
 let win = null
@@ -85,12 +85,15 @@ function createWindow() {
   // 窗口关闭触发
   // 若isQuit为false, 则不退出, 只是缩小到托盘
   win.on('close', (e) => {
-    if (isQuit) {
-      win = null
-    } else {
-      e.preventDefault()
-      win.hide()
-    }
+    isQuit = true
+    app.exit()
+    e.preventDefault()
+    // if (isQuit) {
+    //   win = null
+    // } else {
+    //   e.preventDefault()
+    //   win.hide()
+    // }
   })
 }
 

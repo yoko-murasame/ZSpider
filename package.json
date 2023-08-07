@@ -1,10 +1,11 @@
 {
-  "name": "zspider",
+  "name": "ZCS-Spider",
   "version": "2.0.0",
   "private": true,
   "scripts": {
     "lint": "vue-cli-service lint",
     "build": "vue-cli-service electron:build",
+    "build:vue": "vue-cli-service build",
     "serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",

@@ -13,7 +13,7 @@ let url = `https://sqfb.zjsq.net.cn:8089/nuxtsyq/new/MarkInfo?zh=${水库代码}
   水库名称
 )}&day=${天数}`
 // let url ='https://sqfb.zjsq.net.cn:8089/nuxtsyq/new/MarkInfo?zh=70508440&zm=%E6%B3%BD%E9%9B%85%E6%B0%B4%E5%BA%93&day=1'
-let chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+// let chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
 
 let browser, page
 async function spider() {

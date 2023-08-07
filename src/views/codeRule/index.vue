@@ -221,7 +221,7 @@ export default {
       try {
         this.appendCode(sampleDict[e])
       } catch (error) {
-        this.appendCode("console.log('hello ZSpider')")
+        this.appendCode("console.log('hello 智城所爬虫小工具')")
       }
     },
   },
