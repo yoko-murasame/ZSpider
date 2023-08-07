@@ -18,11 +18,11 @@ module.exports = {
       }),
     ],
     // 打包时包含,虽然可以启动,但是功能错误
-    // externals: {
-    //   vm2: 'require("vm2")',
-    //   mysql2: 'require("mysql2")',
-    //   'puppeteer-core': 'require("puppeteer-core")',
-    // },
+    externals: {
+      vm2: 'require("vm2")',
+      mysql2: 'require("mysql2")',
+      'puppeteer-core': 'require("puppeteer-core")',
+    },
     module: {
       // Removes these errors: "Critical dependency: require function is used in a way in which dependencies cannot be statically extracted"
       // https://github.com/AnalyticalGraphicsInc/cesium-webpack-example/issues/6
@@ -105,18 +105,83 @@ module.exports = {
       // In place of win.loadURL('app://./index.html'), and set customFileProtocol to './'
       customFileProtocol: './',
       nodeIntegration: true, // render进程中可以使用node
+      // 需要依赖的外部模块列表，一个是webpack中需要排除，一个是electron-builder中需要排除
+      externals: ['puppeteer-core', 'mysql2', 'vm2'],
+      // If you are using Yarn Workspaces, you may have multiple node_modules folders
+      // List them all here so that VCP Electron Builder can find them
+      nodeModulesPath: ['../../node_modules', './node_modules'],
       builderOptions: {
         extraResources: [
-          // 这src目录其实没啥用
+          // 排除src目录，将不被打包进asar
           // 'src',
           // {
           //   from: 'dist',
           //   to: 'src',
           // },
-          'node_modules',
+          // 'node_modules',
+          // 将vm2中引用到的第三方库打包出来
           {
             from: 'node_modules',
             to: '../node_modules',
+            // 方式一：一个一个找，被依赖的模块
+            filter: [
+              'agent-base/**',
+              'balanced-match/**',
+              'brace-expansion/**',
+              'buffer-crc32/**',
+              'concat-map/**',
+              'debug/**',
+              'end-of-stream/**',
+              'electron/**',
+              '!electron/dist/**',
+              'fd-slicer/**',
+              'find-up/**',
+              'fs.realpath/**',
+              'glob/**',
+              'https-proxy-agent/**',
+              'inflight/**',
+              'inherits/**',
+              'locate-path/**',
+              'minimatch/**',
+              'moment/**',
+              'ms/**',
+              'once/**',
+              'p-limit/**',
+              'p-locate/**',
+              'p-try/**',
+              'path-exists/**',
+              'path-is-absolute/**',
+              'pend/**',
+              'pkg-dir/**',
+              'proxy-from-env/**',
+              'pump/**',
+              'puppeteer-core/**',
+              'rimraf/**',
+              'wrappy/**',
+              'ws/**',
+              'xlsx/**',
+              'yauzl/**',
+              // '!**/dist/**',
+            ],
+            // 方式二：排除不要的依赖（还是太多了）
+            // filter: [
+            //   '**/*',
+            //   '!.bin/**',
+            //   '!.cache/**',
+            //   '!@*/**',
+            //   '!css*/**',
+            //   '!core*/**',
+            //   '!babel*/**',
+            //   '!dom*/**',
+            //   '!electron*/**',
+            //   '!es6*/**',
+            //   '!eslint*/**',
+            //   '!lodash*/**',
+            //   '!node*/**',
+            //   '!postcss*/**',
+            //   '!vue*/**',
+            //   '!webpack*/**',
+            // ],
           },
           // {
           //   from: './public',
@@ -127,7 +192,31 @@ module.exports = {
         productName: '智城所爬虫小工具',
         copyright: 'Copyright © ZZES Co,Ltd',
         compression: 'maximum',
-        asar: false,
+        asar: true,
+        // 排除vue相关的打包
+        // asarUnpack: [
+        //   'node_modules/**',
+        //   '!node_modules/.bin/**',
+        //   '!node_modules/.cache/**',
+        //   '!node_modules/@*/**',
+        //   '!node_modules/css*/**',
+        //   '!node_modules/core*/**',
+        //   '!node_modules/babel*/**',
+        //   '!node_modules/dom*/**',
+        //   '!node_modules/electron*/**',
+        //   '!node_modules/es6*/**',
+        //   '!node_modules/eslint*/**',
+        //   '!node_modules/http*/**',
+        //   '!node_modules/lodash*/**',
+        //   '!node_modules/node*/**',
+        //   '!node_modules/postcss*/**',
+        //   '!node_modules/vue*/**',
+        //   '!node_modules/webpack*/**',
+        //   // 'node_modules/puppeteer-core/**',
+        //   // 'node_modules/mysql2',
+        //   // 'node_modules/vm2',
+        // ],
+        // files: ['**/*'],
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: '${productName}-${version}-${os}-${arch}.${ext}',
         win: {
