@@ -1,3 +1,4 @@
+/*eslint-disable*/
 const puppeteer = require('puppeteer-core')
 const XLSX = require('xlsx')
 const moment = require('moment')
@@ -8,7 +9,7 @@ const os = require('os')
 
 let 水库名称 = '珊溪水库'
 let 水库代码 = '70600500'
-let 天数 = 1
+let 天数 = 7
 let url = `https://sqfb.zjsq.net.cn:8089/nuxtsyq/new/MarkInfo?zh=${水库代码}&zm=${encodeURIComponent(
   水库名称
 )}&day=${天数}`
@@ -35,11 +36,12 @@ async function spider() {
 
   await page.goto(url)
 
-  console.log('goto')
+  console.log('页面加载完成')
 
-  // 现在你可以在 page.$eval 或 page.$$eval 中使用 moment 库了
-  const result = moment().format('YYYY-MM-DD HH-mm-ss')
-  console.log('当前日期和时间', result)
+  // 使用 moment 库
+  const result = moment().format('DD/MM/YYYY HH:mm:ss')
+  console.log(result)
+  console.log('当前日期和时间')
 
   // 分析dom table
   let data = await page.$$eval('tbody>.el-table__row', (rows) => {
@@ -48,27 +50,40 @@ async function spider() {
       const dataObj = {}
       for (let i = 0; i < columns.length; i++) {
         const td = columns[i]
+        // 填充数据
         switch (i) {
           case 0:
-            dataObj['序号'] = td.querySelector('div>div').innerText
+            // dataObj['序号'] = td.querySelector('div>div').innerText
+            // dataObj['序号'] = dataObj['序号'].trim() === '-' ? null : dataObj['序号']
             break
           case 1:
-            dataObj['时间'] = td.querySelector('div').innerText
+            // 时间
+            dataObj['record_time'] = td.querySelector('div').innerText
             break
           case 2:
-            dataObj['雨量'] = td.querySelector('div').innerText
+            // 雨量
+            dataObj['rainfall'] = td.querySelector('div').innerText
+            dataObj['rainfall'] = dataObj['rainfall'].trim() === '-' ? null : dataObj['rainfall']
             break
           case 3:
-            dataObj['水位'] = td.querySelector('div>span').innerText
+            // 水位
+            dataObj['waterlevel'] = td.querySelector('div>span').innerText
+            dataObj['waterlevel'] = dataObj['waterlevel'].trim() === '-' ? null : dataObj['waterlevel']
             break
           case 4:
-            dataObj['库容'] = td.querySelector('div>span').innerText
+            // 库容
+            dataObj['capacity'] = td.querySelector('div>span').innerText
+            dataObj['capacity'] = dataObj['capacity'].trim() === '-' ? null : dataObj['capacity']
             break
           case 5:
-            dataObj['人工出库流量'] = td.querySelector('div>span').innerText
+            // 人工入库流量
+            dataObj['manual_inbound'] = td.querySelector('div>span').innerText
+            dataObj['manual_inbound'] = dataObj['manual_inbound'].trim() === '-' ? null : dataObj['manual_inbound']
             break
           case 6:
-            dataObj['人工入库流量'] = td.querySelector('div>span').innerText
+            // 人工出库流量
+            dataObj['manual_outbound'] = td.querySelector('div>span').innerText
+            dataObj['manual_outbound'] = dataObj['manual_outbound'].trim() === '-' ? null : dataObj['manual_outbound']
             break
           default:
             break
@@ -78,8 +93,8 @@ async function spider() {
     })
   })
 
-  console.log('包括冗余行数量', data.length)
-  // console.log('data', data)
+  console.log(data.length)
+  console.log('爬取完成，包括冗余行数量')
 
   // 合并数据
   const half = data.length / 2
@@ -96,22 +111,34 @@ async function spider() {
     return filteredObj
   }
 
+  // 合并两个数组数据
   const mergedData = firstHalf.map((item, index) => {
     const filteredFirst = filterEmptyKeys(item)
     const filteredSecond = filterEmptyKeys(secondHalf[index])
-    return { ...filteredFirst, ...filteredSecond }
+    return { 
+      ...filteredFirst,
+      ...filteredSecond,
+      // 固定数据
+      name: 水库名称,
+      code: 水库代码,
+      update_by: 'admin',
+      update_time: result,
+    }
   })
+  // 过滤掉无效数据
+  .filter(item => item['水位'] !== null && item['库容'] !== null && item['雨量'] !== null)
 
   await browser.close()
 
   // 格式化数据的时间
   mergedData.forEach((item) => {
-    item['时间'] =
-      item['时间'] &&
-      moment(item['时间'], 'MM-DD HH:mm').format('YYYY-MM-DD HH:mm:ss')
+    item['record_time'] =
+      item['record_time'] &&
+      moment(item['record_time'], 'MM-DD HH:mm').format('DD/MM/YYYY HH:mm:ss')
   })
 
-  console.log('合并后的数据', mergedData)
+  // console.log(mergedData)
+  console.log('处理数据完成')
 
   // 导出数据
   const ws = XLSX.utils.json_to_sheet(mergedData)
@@ -120,7 +147,7 @@ async function spider() {
   // 保存桌面
   const homedir = os.homedir();
   const desktopPath = 'desktop'
-  const fileName = `${水库名称}-${水库代码}-${result}.xlsx`
+  const fileName = `${水库名称}-${水库代码}-${moment().format('YYYY-MM-DD-HHmmss')}.xlsx`
   const filePath = path.join(homedir, desktopPath, fileName)
   console.log(filePath)
   XLSX.writeFile(wb, filePath)
