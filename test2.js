@@ -9,8 +9,8 @@ const os = require('os')
 
 let 水库名称 = '珊溪水库'
 let 水库代码 = '70600500'
-let 天数 = 7
-let url = `https://sqfb.zjsq.net.cn:8089/nuxtsyq/new/MarkInfo?zh=${水库代码}&zm=${encodeURIComponent(
+let 天数 = 1
+let url = `https://sqfb.jhhk.zjsw.cn:8089/nuxtsyq/new/MarkInfo?zh=${水库代码}&zm=${encodeURIComponent(
   水库名称
 )}&day=${天数}`
 // let url ='https://sqfb.zjsq.net.cn:8089/nuxtsyq/new/MarkInfo?zh=70508440&zm=%E6%B3%BD%E9%9B%85%E6%B0%B4%E5%BA%93&day=1'
@@ -115,7 +115,7 @@ async function spider() {
   const mergedData = firstHalf.map((item, index) => {
     const filteredFirst = filterEmptyKeys(item)
     const filteredSecond = filterEmptyKeys(secondHalf[index])
-    return { 
+    return {
       ...filteredFirst,
       ...filteredSecond,
       // 固定数据
