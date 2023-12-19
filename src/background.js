@@ -162,7 +162,7 @@ function createTray() {
       },
     }),
   ])
-  tray.setToolTip('智城所爬虫小工具')
+  tray.setToolTip('SpiderTool')
   tray.setContextMenu(contextMenu)
 
   tray.on('click', () => {

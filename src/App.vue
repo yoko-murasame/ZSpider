@@ -3,7 +3,7 @@
     <div class="frame-header-block">
       <div class="frame-header">
         <div class="frame-title">
-          智城所爬虫小工具
+          SpiderTool
           <!-- (<span
             @click="doLogin"
             class="online-status"
@@ -48,7 +48,7 @@ import EventBus from '@/utils/EventBus'
 const { shell } = require('electron')
 
 export default {
-  name: '智城所爬虫小工具',
+  name: 'SpiderTool',
   components: {
     SystemLog,
     SystemInfo,

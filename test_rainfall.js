@@ -15,20 +15,20 @@ async function spider() {
   browser = await puppeteer.launch({
     headless: true,
     executablePath: chromePath,
-    // args: [
-    //   // 禁用一些功能
-    //   '--no-sandbox', // 沙盒模式
-    //   '--disable-setuid-sandbox', // uid沙盒
-    //   '--disable-dev-shm-usage', // 创建临时文件共享内存
-    //   '--disable-accelerated-2d-canvas', // canvas渲染
-    //   '--disable-gpu', // GPU硬件加速
-    // ],
-    // ignoreDefaultArgs: ['--enable-automation'],
+    args: [
+      // 禁用一些功能
+      '--no-sandbox', // 沙盒模式
+      '--disable-setuid-sandbox', // uid沙盒
+      '--disable-dev-shm-usage', // 创建临时文件共享内存
+      '--disable-accelerated-2d-canvas', // canvas渲染
+      '--disable-gpu', // GPU硬件加速
+    ],
+    ignoreDefaultArgs: ['--enable-automation'],
   })
   page = await browser.newPage()
 
   let 收集区域 = ['鹿城区', '龙湾区', '瓯海区', '洞头区', '永嘉县', '平阳县', '苍南县', '文成县', '泰顺县', '瑞安市', '乐清市', '龙港市']
-  let 查询天数 = 3
+  let 查询天数 = 2
 
   let xlsDatas = 收集区域.map(区域 => ({ '县（区、市）': 区域 }))
 
@@ -40,11 +40,13 @@ async function spider() {
     console.log(`日期：${日期字符串}，最早时刻：${最早时刻}，最后时刻：${最后时刻}`)
     // 雨量nuxt地址：https://sqfb.jhhk.zjsw.cn:8089/nuxtsyq/new/realtimeRain?areaFlag=1&sss=温州市&ssx&st=2023-12-17T00:00:00&et=2023-12-17T23:59:59&ly&max&min=0&bool=false&bxdj=1,2,3,4,5,&zm&type=0&lx=QX,ME,SX,DS&progress=false
     let rainfallUrl = `https://sqfb.jhhk.zjsw.cn:8089/nuxtsyq/new/realtimeRain?areaFlag=1&sss=温州市&ssx&st=${最早时刻}&et=${最后时刻}&ly&max&min=0&bool=false&bxdj=1,2,3,4,5,&zm&type=0&lx=QX,ME,SX,DS&progress=false`
+    console.log(`日期：${日期字符串}，地址：${rainfallUrl}`)
     // 打开页面
     await page.goto(rainfallUrl)
+    console.log(`日期：${日期字符串}，页面打开`)
     // 点击分区统计
     await page.click('div.tab > div:nth-child(2)')
-    await page.waitForTimeout(2000);
+    // await page.waitForTimeout(2000); // 这个延时会在vm环境中执行失败
     console.log(`日期：${日期字符串}，页面加载完成`)
 
     // 分析dom table
@@ -105,44 +107,6 @@ async function spider() {
   console.log(filePath)
   XLSX.writeFile(wb, filePath)
 
-  // 通过对话框让用户选择导出目录和文件名
-  // const path = ipcRenderer.sendSync('showSaveJsonDialog')
-  // console.log('保存目录')
-  // console.log(path)
-  // dialog
-  //   .showSaveDialog({
-  //     defaultPath: `${水库名称}-${水库代码}-${result}.xlsx`,
-  //   })
-  //   .then((result) => {
-  //     if (!result.canceled && result.filePath) {
-  //       const filePath = result.filePath
-  //       // const ws = XLSX.utils.json_to_sheet(mergedData)
-  //       // const wb = XLSX.utils.book_new()
-  //       // XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
-  //       // 将工作簿写入指定的文件路径
-  //       XLSX.writeFile(wb, filePath)
-  //     }
-  //   })
-  //   .catch((err) => {
-  //     console.error(err)
-  //   })
 }
 
 spider()
-
-// 路径测试
-// const { remote } = require('electron')
-// const desktopPath = remote.app.getPath('desktop')
-// console.log(desktopPath)
-// const fileName = `aaa.xlsx`
-// console.log(fileName)
-// const path = require('path')
-// const filePath = path.join('aaa', fileName)
-// console.log(filePath)
-// const os = require('os');
-// const homedir = os.homedir();
-// console.log(homedir)
-// const moment = require('moment')
-// const now = moment().format('YYYY-MM-DD HH-mm-ss')
-// console.log(now)
-// return

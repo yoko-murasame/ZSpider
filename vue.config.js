@@ -189,7 +189,7 @@ module.exports = {
           // },
         ],
         appId: 'com.zzes.spider',
-        productName: '智城所爬虫小工具',
+        productName: 'SpiderTool',
         copyright: 'Copyright © ZZES Co,Ltd',
         compression: 'maximum',
         asar: true,
@@ -244,7 +244,7 @@ module.exports = {
         //   createDesktopShortcut: true, // 创建桌面图标
         //   createStartMenuShortcut: true, // 创建开始菜单图标
         //   deleteAppDataOnUninstall: true, // 卸载时删除用户数据
-        //   shortcutName: '智城所爬虫小工具', // 图标名称
+        //   shortcutName: 'SpiderTool', // 图标名称
         //   guid: 'a961d83b-826a-fbcb-4d1c-97913043cse5', // 软件guid
         // },
       },

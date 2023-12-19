@@ -6,7 +6,7 @@ Vue.use(Vuex)
 
 const state = {
   /* eslint-disable */
-  ServerUrl: 'https://api.github.com/repos/klren0312/智城所爬虫小工具',
+  ServerUrl: 'https://api.github.com/repos/klren0312/SpiderTool',
   /* eslint-enable */
   chromePath: '',
   rule: {

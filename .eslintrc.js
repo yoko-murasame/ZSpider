@@ -3,6 +3,7 @@ module.exports = {
 
   env: {
     node: true,
+    browser: true,
   },
 
   extends: [
@@ -16,8 +17,8 @@ module.exports = {
   },
 
   rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-console': 'off', // process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-debugger': 'off', // process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'prettier/prettier': [
       'error',
       {
